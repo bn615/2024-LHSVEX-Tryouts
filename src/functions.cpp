@@ -41,9 +41,9 @@ std::tuple<double, double, double> turn_lookup(double degrees) {
 		get<2>(constants) = 0; 
 	}
 	else if (fabs(degrees) <= 30) {
-		get<0>(constants) = 0;
+		get<0>(constants) = 180;
 		get<1>(constants) = 0;
-		get<2>(constants) = 0;
+		get<2>(constants) = 450;
 	}
 	else if (fabs(degrees) <= 40) {
 		get<0>(constants) = 0;

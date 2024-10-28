@@ -39,6 +39,8 @@ Motor bl(-11, v5::MotorGears::blue, v5::MotorUnits::rotations);
 MotorGroup left_dt({fl.get_port(), ml.get_port(), bl.get_port()}, v5::MotorGears::blue, v5::MotorUnits::rotations);
 MotorGroup right_dt({fr.get_port(), mr.get_port(), br.get_port()}, v5::MotorGears::blue, v5::MotorUnits::rotations);
 
+
+MotorGroup intake({4, -5}, v5::MotorGears::blue, v5::MotorUnits::rotations);
 // Inertial
 IMU inertial(7);
 
@@ -47,7 +49,9 @@ IMU inertial(7);
 // Rotation right_rot(10);
 
 // Pistons (Ports A-H)
-adi::DigitalOut piston('A');
+adi::DigitalOut mogo_clamp('G'); // false = unclamped, true = clamped
+adi::DigitalOut arm('F'); // false = up, true = down
+adi::DigitalOut hood('E'); // false = down, true = up
 
 // Controller
 Controller controller(E_CONTROLLER_MASTER);

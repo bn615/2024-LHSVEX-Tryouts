@@ -19,7 +19,7 @@ extern Motor bl;
 extern Motor br;
 
 // Intake
-// extern Motor intake; 
+extern MotorGroup intake;
 
 // In PROS, one important function is grouping motors together. 
 // Especially in differential drive trains, the left and right sides operate seperately.
@@ -35,7 +35,9 @@ extern IMU inertial;
 // extern Rotation right_rot;
 
 // Example piston
-extern adi::DigitalOut piston;
+extern adi::DigitalOut mogo_clamp;
+extern adi::DigitalOut arm;
+extern adi::DigitalOut hood;
 
 // Controller
 extern Controller controller; 

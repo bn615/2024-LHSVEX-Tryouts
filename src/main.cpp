@@ -24,15 +24,15 @@ void on_center_button() {
  */
 void initialize() {
 	pros::lcd::initialize();
-	controller.clear();
-	
-	// Reset inertial
 	inertial.reset();
+	controller.clear();
 
-	// This is exactly like holding the brake of a car
-	// Motors hold their position when they stop moving
 	left_dt.set_brake_mode(E_MOTOR_BRAKE_HOLD);
 	right_dt.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+
+	mogo_clamp.set_value(false);
+	arm.set_value(false);
+	hood.set_value(false);
 
 }
 
@@ -41,7 +41,11 @@ void initialize() {
  * the VEX Competition Switch, following either autonomous or opcontrol. When
  * the robot is enabled, this task will exit.
  */
-void disabled() {}
+void disabled() {
+	mogo_clamp.set_value(false);
+	arm.set_value(false);
+	hood.set_value(false);
+}
 
 /**
  * Runs after initialize(), and before autonomous when connected to the Field
@@ -52,7 +56,11 @@ void disabled() {}
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {}
+void competition_initialize() {
+	mogo_clamp.set_value(false);
+	arm.set_value(false);
+	hood.set_value(false);
+}
 
 /**
  * Runs the user autonomous code. This function will be started in its own task
@@ -84,6 +92,12 @@ void autonomous() {}
 	left_dt.set_brake_mode_all(pros::E_MOTOR_BRAKE_COAST);
 	right_dt.set_brake_mode_all(pros::E_MOTOR_BRAKE_COAST);
 
+
+	// bools for toggling pistons
+	bool clamp_state = false;
+	bool arm_state = true;
+	bool hood_state = false;
+
 	// Set pistons here to false too
 
 	while (true) {
@@ -111,18 +125,32 @@ void autonomous() {}
 		left_dt.move_velocity(left_power);
 		right_dt.move_velocity(right_power);
 		
-		// if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
-		// 	turn(40);
-		// }
 
-		// Example Implementation of Intake
-		// if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
-		// 	intake.move_voltage(12000);
-		// } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){ {
-		// 	intake.move_voltage(-12000);
-		// } else {
-		// 	intake.move_voltage(0);
-		// }
+		// Mogo clamp
+		if (controller.get_digital_new_press(E_CONTROLLER_DIGITAL_L1)){
+			clamp_state = !clamp_state;
+			mogo_clamp.set_value(clamp_state);
+		}
+
+		// Intake
+		if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+			intake.move_voltage(12000);
+		} else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
+			intake.move_voltage(-12000);
+		} else {
+			intake.move_velocity(0);
+		}
+
+		// Arm and arm claw
+		if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)){
+			hood_state = !hood_state;
+			hood.set_value(hood_state);
+		}
+
+		if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)){
+			arm_state = !arm_state;
+			arm.set_value(arm_state);
+		}
 
 		// Delay is in milliseconds
 		// Important because in a while loop, this is being repeated infinitely
